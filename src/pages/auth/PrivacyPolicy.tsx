@@ -11,9 +11,9 @@ const PrivacyPolicy = () => {
           regarding what has already been stated here will be accepted.
         </p>
         <p className="text-sm">
-          This privacy policy ("policy") will help you understand how [name]
-          ("us", "we", "our") uses and protects the data you provide to us when
-          you visit and use [website] ("website", "service").{" "}
+          This privacy policy ("policy") will help you understand how
+          altfin-loan uses and protects the data you provide to us when you
+          visit and use our service{" "}
         </p>
         <p className="text-sm">
           We reserve the right to change this policy at any given time, of which

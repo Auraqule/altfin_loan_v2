@@ -194,7 +194,6 @@ const LoanCalculator = () => {
   };
 
   //   setUserData(userLoan);
-
   useEffect(() => {
     const retrievedUserId: any = localStorage.getItem("userID");
     const userKey = JSON.parse(retrievedUserId);

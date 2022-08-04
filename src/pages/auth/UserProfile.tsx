@@ -22,7 +22,7 @@ const UserProfile = () => {
         style={{ minWidth: "318px" }}
       >
         <h1 className="font-bold text-blue -mt-2 pb-2 text-center">
-          Altin Loan{" "}
+          Altfin Loan{" "}
         </h1>
         <div className="mb-2 flex items-center justify-start space-x-16 ">
           <IconButton>
