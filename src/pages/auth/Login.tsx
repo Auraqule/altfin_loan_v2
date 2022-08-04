@@ -149,7 +149,7 @@ const Login = () => {
       });
   };
   const forgotPasswordHandler = () => {
-    sendPasswordResetEmail(auth, email, { url: "https:/altfin.loans/login" })
+    sendPasswordResetEmail(auth, email, { url: "https://altfin.loans/login" })
       .then(() => {
         dispatch(setIsVerified(userReg.isVerified));
         console.log("password reset email sent");

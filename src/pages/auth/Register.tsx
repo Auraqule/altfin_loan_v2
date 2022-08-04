@@ -246,7 +246,7 @@ export default function Login() {
         dispatch(setIsVerified(user.emailVerified));
 
         sendEmailVerification(user, {
-          url: "https:/altfin.loans/login",
+          url: "https://altfin.loans/login",
         }).then(() => dispatch(setIsVerified(true)));
         console.log("successFully Done");
         navigate("/success");
