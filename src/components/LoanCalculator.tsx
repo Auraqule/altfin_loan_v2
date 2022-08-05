@@ -200,21 +200,21 @@ const LoanCalculator = () => {
 
   //   setUserData(userLoan);
   useEffect(() => {
-    const retrievedUserId: any = localStorage.getItem("userID");
-    const userKey = JSON.parse(retrievedUserId);
+    // const retrievedUserId: any = localStorage.getItem("userID");
+    // const userKey = JSON.parse(retrievedUserId);
+    // console.log(userKey)
     setIsLoading(true);
-    if (retrievedUserId) {
-      if (userId) {
-        handleFetchUserLoan(userKey);
-        return;
-      }
-    }
-    if (!retrievedUserId) {
-      getUserInfo();
-      if (userId) {
-        handleFetchUserLoan(userId);
-        return;
-      }
+    // if (retrievedUserId) {
+    //   if (userId) {
+    //     handleFetchUserLoan(userKey);
+    //     return;
+    //   }
+    // }
+
+    getUserInfo();
+    if (userId) {
+      handleFetchUserLoan(userId);
+      return;
     }
 
     async function getUserInfo() {
@@ -244,7 +244,7 @@ const LoanCalculator = () => {
     getUserInfo();
 
     async function handleFetchUserLoan(_userId: string) {
-      if (retrievedUserId || !retrievedUserId) {
+      if (true) {
         try {
           const unsub = onSnapshot(doc(db, "userLoans", _userId), (doc) => {
             // console.log(_userId);
