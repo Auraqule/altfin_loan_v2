@@ -8,6 +8,9 @@ import {
   Timestamp,
   doc,
   onSnapshot,
+  query,
+  where,
+  getDocs,
 } from "firebase/firestore";
 import { db } from "../firebase";
 import emailjs from "@emailjs/browser";
@@ -57,6 +60,8 @@ const LoanCalculator = () => {
   const [reqDuration, setReqDuration] = useState<number>(5);
   const [message, setMessage] = useState<any>({});
   const [messageCount, setMessageCount] = useState(0);
+  const [userId, setUserId] = useState<any>();
+  const [userLoanInfo, setUserLoanInfo] = useState<any>();
   //   const [proceedBtn, setProceedBtn] = useState(true);
   const [userData, setUserData] = useState({
     durationOption: {
@@ -198,59 +203,119 @@ const LoanCalculator = () => {
     const retrievedUserId: any = localStorage.getItem("userID");
     const userKey = JSON.parse(retrievedUserId);
     setIsLoading(true);
-
     if (retrievedUserId) {
-      const unsub = onSnapshot(doc(db, "userLoans", userKey), (doc) => {
-        // console.log(userKey, "From inside ..");
-        // console.log("Current data: ", doc.data());
-        if (doc.data()?.durationOption !== undefined) {
-          const {
-            durationOption,
-            hasPaidBack,
-            isApproved,
-            hasRequestedLoan,
-            timeStamp,
-            reqDuration,
-            reqAmount,
-            singleDurationOpt,
-          }: any = doc.data();
-          if (durationOption || hasRequestedLoan) {
-            const date = new Timestamp(timeStamp.seconds, timeStamp.nanoseconds)
-              .toDate()
-              .toDateString();
-            setUserData({
-              durationOption,
-              hasPaidBack,
-              isApproved,
-              hasRequestedLoan,
-              timeStamp: date,
-              reqDuration,
-              reqAmount,
-              singleDurationOpt,
-            });
-          }
+      if (userId) {
+        handleFetchUserLoan(userKey);
+        return;
+      }
+    }
+    if (!retrievedUserId) {
+      getUserInfo();
+      if (userId) {
+        handleFetchUserLoan(userId);
+        return;
+      }
+    }
 
+    async function getUserInfo() {
+      const q = query(
+        collection(db, "userLoans"),
+        where("email", "==", userReg.email),
+        where("hasRequestedLoan", "==", true)
+      );
+      try {
+        const querySnapshot = await getDocs(q);
+        // console.log(querySnapshot);
+        querySnapshot.forEach((doc: any) => {
+          // doc.data() is never undefined for query doc snapshots
+          setUserId(doc.id);
+          setUserLoanInfo(doc.data());
+
+          // console.log(doc.id);
+          // console.log(doc.data().hasRequestedLoan);
+          // console.log(doc.id, " => ", doc.data());
+        });
+      } catch (err) {
+        console.log(err);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    getUserInfo();
+
+    async function handleFetchUserLoan(_userId: string) {
+      if (retrievedUserId || !retrievedUserId) {
+        try {
+          const unsub = onSnapshot(doc(db, "userLoans", _userId), (doc) => {
+            // console.log(_userId);
+            // console.log(userKey, "From inside ..");
+            // console.log("Current data: ", doc.data());
+            // console.log(doc.data());
+
+            if (doc.data()?.durationOption !== undefined) {
+              const {
+                durationOption,
+                hasPaidBack,
+                isApproved,
+                hasRequestedLoan,
+                timeStamp,
+                reqDuration,
+                reqAmount,
+                singleDurationOpt,
+              }: any = doc.data();
+              if (durationOption || (hasRequestedLoan && reqAmount)) {
+                // This part gave me problem, reqAmount was refusing to update
+                setReqAmount(reqAmount);
+                const date = new Timestamp(
+                  timeStamp.seconds,
+                  timeStamp.nanoseconds
+                )
+                  .toDate()
+                  .toDateString();
+                setUserData({
+                  durationOption,
+                  hasPaidBack,
+                  isApproved,
+                  hasRequestedLoan,
+                  timeStamp: date,
+                  reqDuration,
+                  reqAmount,
+                  singleDurationOpt,
+                });
+              }
+
+              setIsLoading(false);
+            }
+            if (!userData.hasRequestedLoan) {
+              setIsLoading(false);
+            }
+            setIsLoading(false);
+
+            // dispatch(
+            //   calculateLoan({
+            //     ...userLoan,
+            //     ...durationOption,
+            //     hasPaidBack,
+            //     isApproved,
+            //     hasRequestedLoan,
+            //     reqDuration,
+            //     timeStamp,
+            //   })
+            // );
+            // lll
+          });
+          return () => {
+            unsub();
+          };
+        } catch (err) {
+          console.log(err);
+        } finally {
           setIsLoading(false);
         }
-        if (!userData.hasRequestedLoan) {
-          setIsLoading(false);
-        }
-
-        // dispatch(
-        //   calculateLoan({
-        //     ...userLoan,
-        //     ...durationOption,
-        //     hasPaidBack,
-        //     isApproved,
-        //     hasRequestedLoan,
-        //     reqDuration,
-        //     timeStamp,
-        //   })
-        // );
-      });
-      return () => {
-        unsub();
-      };
+      }
+    }
+    if (userId) {
+      handleFetchUserLoan(userId);
     }
 
     // const smth: any = localStorage.getItem("user");
@@ -260,8 +325,16 @@ const LoanCalculator = () => {
     // } else {
     //   <Navigate to="/loan" />;
     // }
+
     // console.log(userLoan);
-  }, [messageCount, userData.hasRequestedLoan, userData.timeStamp]);
+  }, [
+    messageCount,
+    userData.hasRequestedLoan,
+    userData.timeStamp,
+    userId,
+    userReg.email,
+    userLoanInfo,
+  ]);
 
   useEffect(() => {
     const { reqDuration, reqAmount } = userData;
