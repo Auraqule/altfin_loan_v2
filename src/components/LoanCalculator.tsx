@@ -376,12 +376,12 @@ const LoanCalculator = () => {
   }, [userData, userData.hasRequestedLoan]);
 
   return (
-    <section className="w-screen h-auto flex gap-16 flex-col py-10 px-10 md:flex-row  lg:flex-row md:h-screen justify-evenly items-center bg-blue relative overflow-hidden">
+    <section className="w-screen overflow-x-auto overflow-y-auto h-auto flex gap-16 flex-col py-10 px-10 md:flex-row  lg:flex-row md:h-screen justify-evenly items-center bg-blue relative overflow-hidden">
       {/* landscape:flex-row landscape:overflow-scroll md:landscape:overflow-hidden landscape:w-auto md:landscape:w-screen landscape:gap-20 md:landscape:gap-16 landscape:h-auto md:landscape:h-screen landscape:py-32 md:landscape:py-10  landscape:pl-20 md:landscape:pl-0 */}
 
       <div className=" basis-1/3  flex flex-col items-center justify-center h-[70vh] ">
         {/* landscape:basis-1/2 */}
-        <div className="left-wrapper max-w-[50vh]  text-white font-semibold">
+        <div className="left-wrapper max-w-[80vw] md:max-w-[40vw] lg:max-w-[25vw] lg:min-w-[380px] text-white font-semibold">
           {/* landscape:w-[60vw] */}
           <h1 className="text-4xl lg:text-5xl lg:leading-snug font-bold pb-6 leading-snug ">
             Loan company like no other!
@@ -473,7 +473,7 @@ const LoanCalculator = () => {
         </div>
       </div>
       <div className="right basis-1/3 flex flex-col items-center justify-center h-[70vh]">
-        <div className="w-[25vw] min-w-[50vh]  h-full bg-white z-20 py-16 lg:p-16 flex flex-col items-center relative">
+        <div className="w-[90vw] max-w-[90vw] sm:max-w-[80vw] md:max-w-[40vw] md:w-[40vw] lg:max-w-[30vw] lg:min-w-[380px] xl:max-w-[25vw]  h-auto bg-white z-20 py-16 lg:p-16 flex flex-col items-center relative">
           {isLoading && (
             <div className="absolute top-4">
               <Box sx={{ display: "flex" }}>
@@ -741,7 +741,7 @@ const LoanCalculator = () => {
             </svg> */}
           </div>
           <div
-            className="circle-big h-[50vh] w-[50vh]  rounded-full absolute  rotate-90 right-0 bg-red-600"
+            className="circle-big h-[50vh] w-[50vh] hidden rounded-full absolute  rotate-90 right-0 bg-red-600"
             style={{ bottom: "-14.8rem" }}
           >
             {" "}

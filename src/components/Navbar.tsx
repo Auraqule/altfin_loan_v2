@@ -14,7 +14,7 @@ export default function Navbar() {
           <div className="w-full relative flex justify-between lg:w-auto lg:static lg:block lg:justify-start">
             <Link
               to="/"
-              className="text-white text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase"
+              className="text-white  text-sm font-bold leading-relaxed inline-block mr-4 py-2 whitespace-nowrap uppercase"
             >
               Altfin Loan
             </Link>
@@ -23,7 +23,7 @@ export default function Navbar() {
               type="button"
               onClick={() => setNavbarOpen(!navbarOpen)}
             >
-              <i className="text-white fas fa-bars"></i>
+              <i className="text-white fas fa-bars "></i>
               <img
                 src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSFPVMD-WaTpMgMtlpmatQOkXSm8iP4LRiJ3g&usqp=CAU"
                 alt="menu"

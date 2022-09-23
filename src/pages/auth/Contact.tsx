@@ -18,7 +18,7 @@ const Contact = () => {
             >
               <path d="M12 0c-4.198 0-8 3.403-8 7.602 0 4.198 3.469 9.21 8 16.398 4.531-7.188 8-12.2 8-16.398 0-4.199-3.801-7.602-8-7.602zm0 11c-1.657 0-3-1.343-3-3s1.343-3 3-3 3 1.343 3 3-1.343 3-3 3z" />
             </svg>
-            4, Faronbi Street, Aare Bodija, Ibadan Nigeria.
+            4, Yemi Farounbi Street, Aare Bodija, Ibadan Nigeria.
           </p>
           <p className="font-sans text-sm md:text-lg my-2 md:my-4">
             <svg
@@ -30,7 +30,7 @@ const Contact = () => {
             >
               <path d="M12 12.713l-11.985-9.713h23.971l-11.986 9.713zm-5.425-1.822l-6.575-5.329v12.501l6.575-7.172zm10.85 0l6.575 7.172v-12.501l-6.575 5.329zm-1.557 1.261l-3.868 3.135-3.868-3.135-8.11 8.848h23.956l-8.11-8.848z" />
             </svg>{" "}
-            loan@altfinglobal.com
+            info@altfinglobal.com
           </p>
           <p className="font-sans text-sm md:text-lg my-2 md:my-4">
             <svg
@@ -42,7 +42,7 @@ const Contact = () => {
             >
               <path d="M20 22.621l-3.521-6.795c-.008.004-1.974.97-2.064 1.011-2.24 1.086-6.799-7.82-4.609-8.994l2.083-1.026-3.493-6.817-2.106 1.039c-7.202 3.755 4.233 25.982 11.6 22.615.121-.055 2.102-1.029 2.11-1.033z" />
             </svg>
-            +234-7066389744
+            +234-8026410549
           </p>{" "}
           <br />
           <p className="font-sans text-sm md:text-lg my-2 md:my-4">

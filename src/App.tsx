@@ -10,6 +10,8 @@ import { useAppSelector } from "./hooks/useLoan";
 import UserProfile from "./pages/auth/UserProfile";
 import Contact from "./pages/auth/Contact";
 import PrivacyPolicy from "./pages/auth/PrivacyPolicy";
+import PhoneOtp from "./pages/auth/PhoneOtp";
+import Home from "./pages/auth/Home";
 
 function App() {
   // const current = false;
@@ -24,11 +26,13 @@ function App() {
 
   return (
     <Routes>
+      <Route index element={<Home />} />
       <Route path="/" element={<Auth />}>
-        <Route index element={<Register />} />
+        <Route path="register" element={<Register />} />
         <Route path="login" element={<Login />} />
       </Route>
       <Route path="success" element={<AccountCreatedSuccess />} />
+      <Route path="otp-verify" element={<PhoneOtp />} />
       <Route
         path="user-profile"
         element={

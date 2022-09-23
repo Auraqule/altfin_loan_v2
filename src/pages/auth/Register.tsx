@@ -4,7 +4,16 @@ import Footer from "../../components/Footer";
 import { Link, useNavigate } from "react-router-dom";
 import { useAppDispatch, useAppSelector } from "../../hooks/useLoan";
 import { login, setIsVerified } from "../../redux/slices/userSlice";
-import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import toast, { Toaster } from "react-hot-toast";
+import {
+  setDoc,
+  doc,
+  serverTimestamp,
+  query,
+  collection,
+  where,
+  getDocs,
+} from "firebase/firestore";
 import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
@@ -61,6 +70,15 @@ export default function Login() {
   const [perc, setPerc] = useState<any>(null);
   const [isPasswordVisisble, setIsPasswordVisible] = useState(false);
   const [userData, setUserData] = useState<any>({});
+  const [isRegisterWithPhone, setIsRegisterWithPhone] = useState(false);
+
+  // SUBMIT VERIFICATION METHOD
+  // const [verificationMethod, setVerificationMethod] = useState({
+  //   email: false,
+  //   otp: false,
+  // });
+  // const [isVerificationModal, setIsVerificationModal] = useState(false);
+  // const handleCloseVerificationModal = () => setIsVerificationModal(false);
 
   // MODAL FOR INVALID CREDENTIALS
   const [open, setOpen] = useState(false);
@@ -68,11 +86,27 @@ export default function Login() {
   const handleClose = () => setOpen(false);
   const [errMsg, setErrMsg] = useState("");
 
-  const nextPageHandler = (e?: any) => {
+  const nextPageHandler = async (e?: any) => {
     if (e) {
       e.preventDefault();
     }
-    setNextPage(() => !nextPage);
+
+    const q = query(collection(db, "users"), where("phoneNo", "==", phoneNo));
+    try {
+      const querySnapshot = await getDocs(q);
+
+      let exists: boolean = false;
+      querySnapshot.forEach((doc: any) => {
+        if (doc.data()) {
+          exists = true;
+          notify();
+          return;
+        }
+      });
+      if (!exists) setNextPage(() => !nextPage);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   useEffect(() => {
@@ -168,106 +202,155 @@ export default function Login() {
     passport && uploadFile();
     votersCard && uploadFile2();
   }, [passport, votersCard]);
+
+  // let event: React.ChangeEvent<HTMLInputElement> | any;
+  // const registerHandlerManager = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   event = e;
+  //   registerHandler(event);
+  // };
+  // const verifyWithEmail = () => {
+  //   setVerificationMethod({ ...verificationMethod, email: true, otp: false });
+  //   handleCloseVerificationModal();
+  //   setIsVerificationModal(false);
+  //   registerHandlerManager(event);
+  // };
+
+  // const verifyWithOTP = () => {
+  //   setVerificationMethod({ ...verificationMethod, email: false, otp: true });
+  //   registerHandlerManager(event);
+  //   handleCloseVerificationModal();
+  //   setIsVerificationModal(false);
+  // };
+
   const registerHandler = async (e: React.ChangeEvent<HTMLInputElement>) => {
     e.preventDefault();
-    setUserData({
-      fullname,
-      phoneNo: Number(phoneNo),
-      email,
-      password,
-      zone,
-      zoneLeader,
-      sex,
-      bvn: Number(bvn),
-      acctNo: Number(acctNo),
-      acctName,
-      bank,
-      passport: passport.name,
-      votersCard: votersCard.name,
-      homeAddress,
-      workAddress,
-      isLoggedIn: true,
-      agreeWithTerms,
-      isVerified: userReg.isVerified,
-    });
-    // addDoc function was initially here
+    if (isRegisterWithPhone) {
+      registerHandlerInner();
+    } else {
+      registerHandlerInner();
+    }
+    // if (
+    //   !isVerificationModal &&
+    //   !verificationMethod.email &&
+    //   !verificationMethod.otp
+    // ) {
+    //   setIsVerificationModal(true);
+    //   return;
+    // }
+    // if (!isVerificationModal && verificationMethod.email) {
+    //   console.log(isVerificationModal);
+    //   console.log(verificationMethod);
+    //   registerHandlerInner();
+    // } else if (!isVerificationModal && verificationMethod.otp) {
+    //   registerHandlerInner();
+    //   console.log(isVerificationModal);
+    //   console.log(verificationMethod);
+    // }
+    function registerHandlerInner() {
+      setUserData({
+        fullname,
+        phoneNo: Number(phoneNo),
+        email,
+        password,
+        zone,
+        zoneLeader,
+        sex,
+        bvn: Number(bvn),
+        acctNo: Number(acctNo),
+        acctName,
+        bank,
+        passport: passport.name,
+        votersCard: votersCard.name,
+        homeAddress,
+        workAddress,
+        isLoggedIn: true,
+        agreeWithTerms,
+        isVerified: userReg.isVerified,
+      });
+      // addDoc function was initially here
 
-    // console.log("Document written with ID: ", docRef.id);
+      // console.log("Document written with ID: ", docRef.id);
 
-    // Push user registration info to database
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        const user = userCredential.user;
-        // Add a new user document without an auto-generated id. but an ID coming from the authentication phase
-        // const docRef =
-        setDoc(doc(db, "users", user.uid), {
-          fullname,
-          email,
-          phoneNo,
-          password,
-          bvn,
-          acctNo,
-          acctName,
-          bank,
-          zone,
-          zoneLeader,
-          sex,
-          passport: userData.passport,
-          votersCard: userData?.votersCard,
-          agreeWithTerms,
-          homeAddress,
-          workAddress,
-          timestamp: serverTimestamp(),
-        });
-        dispatch(
-          login({
+      // Push user registration info to database
+      createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+          // Signed in
+          const user = userCredential.user;
+          // Add a new user document without an auto-generated id. but an ID coming from the authentication phase
+          // const docRef =
+          setDoc(doc(db, "users", user.uid), {
             fullname,
-            phoneNo: Number(phoneNo),
             email,
+            phoneNo,
             password,
+            bvn,
+            acctNo,
+            acctName,
+            bank,
             zone,
             zoneLeader,
             sex,
-            bvn: Number(bvn),
-            acctNo: Number(acctNo),
-            acctName,
-            bank,
-            passport: passport.name,
-            votersCard: votersCard.name,
+            passport: userData.passport,
+            votersCard: userData?.votersCard,
+            agreeWithTerms,
             homeAddress,
             workAddress,
-            isLoggedIn: true,
-            agreeWithTerms,
-            timeStamp: "",
-            isVerified: userReg.isVerified,
-          })
-        );
-        dispatch(setIsVerified(user.emailVerified));
+            timestamp: serverTimestamp(),
+          });
+          dispatch(
+            login({
+              fullname,
+              phoneNo: Number(phoneNo),
+              email,
+              password,
+              zone,
+              zoneLeader,
+              sex,
+              bvn: Number(bvn),
+              acctNo: Number(acctNo),
+              acctName,
+              bank,
+              passport: passport.name,
+              votersCard: votersCard.name,
+              homeAddress,
+              workAddress,
+              isLoggedIn: true,
+              agreeWithTerms,
+              timeStamp: "",
+              isVerified: userReg.isVerified,
+            })
+          );
+          dispatch(setIsVerified(user.emailVerified));
 
-        sendEmailVerification(user, {
-          url: "https://altfin.loans/login",
-        }).then(() => dispatch(setIsVerified(true)));
-        console.log("successFully Done");
-        navigate("/success");
-        // ...
-      })
-      .catch((error) => {
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        console.log(errorCode);
-        console.log(errorMessage);
-        invalidCredentialHandler(errorCode);
-        setNextPage(() => !nextPage);
+          sendEmailVerification(user, {
+            url: "https://altfin.loans/login",
+          }).then(() => dispatch(setIsVerified(true)));
+          console.log("successFully Done");
+          if (!isRegisterWithPhone) navigate("/success");
+          else if (isRegisterWithPhone) {
+            navigate("/otp-verify");
+          }
+          // ...
+        })
+        .catch((error) => {
+          const errorCode = error.code;
+          const errorMessage = error.message;
+          console.log(errorCode);
+          console.log(errorMessage);
+          invalidCredentialHandler(errorCode);
+          setIsRegisterWithPhone(false);
+          setNextPage(() => !nextPage);
 
-        // ..
-      });
+          // ..
+        });
+    }
+    const invalidCredentialHandler = (errorCode: string) => {
+      handleOpen();
+      const start = errorCode.indexOf("/");
+      setErrMsg(errorCode.slice(start + 1));
+    };
   };
-  const invalidCredentialHandler = (errorCode: string) => {
-    handleOpen();
-    const start = errorCode.indexOf("/");
-    setErrMsg(errorCode.slice(start + 1));
-  };
+
   useEffect(() => {}, [zone, zoneLeader, email]);
   //   I used this 👇 to be able to make use of react-select when typescript rejected the onChange function
   // This is a very interesting & powerful concept I came up with especially when working with typescript
@@ -287,9 +370,22 @@ export default function Login() {
   const passwordVisibilityHandler = () => {
     setIsPasswordVisible(!isPasswordVisisble);
   };
+  // useEffect(() => {
+  //   console.log(verificationMethod);
+  // }, [verificationMethod]);
 
+  const notify = () => toast("User already exists");
   return (
     <section className="bg-blue h-auto">
+      <Toaster
+        toastOptions={{
+          style: {
+            font: "bold",
+            color: "#dc143c",
+            background: "",
+          },
+        }}
+      />
       {errMsg && (
         <Modal
           open={open}
@@ -301,7 +397,7 @@ export default function Login() {
             <Typography id="modal-modal-title" variant="h6" component="h2">
               {errMsg}
             </Typography>
-            <Link to="contact">
+            <Link to="/contact" target="_blank">
               <p className="text-md font-semibold text-blue">Contact Support</p>
             </Link>
             <div className="mt-4">
@@ -312,24 +408,69 @@ export default function Login() {
           </Box>
         </Modal>
       )}
+      {/* {isVerificationModal && (
+        <Modal
+          open={isVerificationModal}
+          onClose={handleCloseVerificationModal}
+          aria-labelledby="modal-modal-title"
+          aria-describedby="modal-modal-description"
+        >
+          <Box sx={style}>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Choose Verification Method
+            </Typography>
+            <Link to="contact">
+              <p className="text-md font-semibold text-blue">Contact Support</p>
+            </Link>
+            <div className="mt-4 flex h-10 justify-between bg-transparent">
+              <Button
+                onClick={handleCloseVerificationModal}
+                size="small"
+                color="inherit"
+                variant="contained"
+              >
+                CANCEL
+              </Button>
+              <Button
+                size="small"
+                onClick={verifyWithEmail}
+                color="info"
+                variant="contained"
+              >
+                EMAIL
+              </Button>
+              <Button
+                onClick={verifyWithOTP}
+                size="small"
+                color="warning"
+                variant="contained"
+              >
+                SMS OTP
+              </Button>
+            </div>
+          </Box>
+        </Modal>
+      )} */}
+
       {!nextPage && (
-        <div className="h-screen bg-blue flex justify-center items-center w-full">
+        <div className="h-screen bg-blue pt-[10vh] md:pt-20  flex-col justify-between  items-center ">
           {/* <Navbar /> */}
-          <form className="self-center" onSubmit={nextPageHandler}>
-            <div className="bg-white px-10 py-8 mb-2 rounded-xl w-screen shadow-md max-w-sm">
-              <div className="space-y-4">
+          <form className="bg-inherit pb-2" onSubmit={nextPageHandler}>
+            <div className="bg-white px-10 py-8 mx-auto sm:relative sm:top-5  sm:-mb-1 sm:-mt-2 rounded-xl w-[340px] min-w-[94vw] sm:min-w-[340px] sm:w-full shadow-md max-w-sm">
+              <div className="space-y-4 ">
                 <h1 className="text-center text-2xl font-semibold text-gray-600">
                   Register
                 </h1>
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="fullname"
                     className="block mb-1 text-gray-600 font-semibold"
                   >
                     Fullname
                   </label>
                   <input
                     value={fullname}
+                    id="fullname"
                     onChange={(e) => setFullName(e.target.value)}
                     type="text"
                     required
@@ -346,7 +487,11 @@ export default function Login() {
                   </label>
                   <input
                     value={phoneNo}
-                    onChange={(e) => setPhoneNo(e.target.value)}
+                    onChange={(e) =>
+                      e.target.value.charAt(0) === "0"
+                        ? setPhoneNo(e.target.value)
+                        : setPhoneNo("")
+                    }
                     id="tel"
                     type="tel"
                     required
@@ -362,6 +507,7 @@ export default function Login() {
                     Email
                   </label>
                   <input
+                    id="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     type="text"
@@ -372,13 +518,14 @@ export default function Login() {
                 </div>
                 <div>
                   <label
-                    htmlFor="email"
+                    htmlFor="password"
                     className="block mb-1 text-gray-600 font-semibold"
                   >
                     Password
                   </label>
                   <div className="flex ">
                     <input
+                      id="password"
                       value={password}
                       minLength={6}
                       onChange={(e) => setPassword(e.target.value)}
@@ -395,6 +542,9 @@ export default function Login() {
                       {!isPasswordVisisble && <VisibilityOffIcon />}
                     </span>
                   </div>
+                  <p className="text-xs font-semibold  text-gray-500 pt-2 ">
+                    Must be at least 6 characters
+                  </p>
                 </div>
               </div>
               <button
@@ -446,6 +596,8 @@ export default function Login() {
             selectSexHandler={selectSexHandler}
             sex={sex}
             perc={perc}
+            isRegisterWithPhone={isRegisterWithPhone}
+            setIsRegisterWithPhone={setIsRegisterWithPhone}
           />
         </section>
       )}

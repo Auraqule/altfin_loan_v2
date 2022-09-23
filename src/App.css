@@ -36,3 +36,29 @@
     transform: rotate(360deg);
   }
 } */
+
+/* .container { */
+/* position: relative;
+  color: white; */
+/*Note, you can change the color to your choice depending on your 
+  image and what color blends with it*/
+/* } */
+
+/* .container::after { */
+/* content: "";
+  opacity: 0.8;
+  background: rgb(26, 31, 41)
+    url("https://assets-global.website-files.com/5e6a544cadf84b1393e2e022/60f419726af51c01fac88c67_e80n-hteQ8K3yiKF1wxwei6KPjnjiAZoYR-WhU4EHXApKclQt8KvlnAWDPgBcI3fYvi3K9djUdgCcu-YD_LZoiAsoYgB-OVQ4Hd92UDkiERasUIbRNUm5Wrm3l3lDXpazksdiYgg.png")
+    no-repeat fixed top;
+  background-blend-mode: luminosity; */
+/* also change the blend mode to what suits you, from darken, to other 
+  many options as you deem fit*/
+/* background-size: cover;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  position: absolute;
+  z-index: -1; */
+/* height: 500px; */
+/* } */

@@ -4,6 +4,7 @@ import Select from "react-select";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Modal from "@mui/material/Modal";
+import { Switch, Tooltip, Zoom } from "@mui/material";
 
 const style = {
   position: "absolute" as "absolute",
@@ -46,6 +47,8 @@ interface IProps {
   selectLeaderHandler: any;
   selectSexHandler: any;
   perc: any;
+  isRegisterWithPhone: any;
+  setIsRegisterWithPhone: any;
 }
 
 const leaderOptions = [
@@ -53,6 +56,7 @@ const leaderOptions = [
   { value: "ojo-alabere", label: "Ojo Alabere" },
   { value: "dupe-akin", label: "Dupe Akin" },
   { value: "ogunsinakawsara", label: "Ogunsina Kawsara" },
+  { value: "none", label: "None" },
 ];
 const zoneOptions = [
   { value: "def", label: "Select your zone" },
@@ -60,6 +64,7 @@ const zoneOptions = [
   { value: "dugbe", label: "Dugbe" },
   { value: "akobo", label: "Akobo" },
   { value: "sango", label: "Sango" },
+  { value: "none", label: "None" },
 ];
 
 const sexOptions = [
@@ -96,6 +101,8 @@ const RegisterPage2: React.FC<IProps> = ({
   selectLeaderHandler,
   selectSexHandler,
   perc,
+  isRegisterWithPhone,
+  setIsRegisterWithPhone,
 }) => {
   const [open, setOpen] = useState(false);
   const handleOpen = () => setOpen(true);
@@ -364,17 +371,34 @@ const RegisterPage2: React.FC<IProps> = ({
           </div>
           <label
             htmlFor="remember"
-            className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-400"
+            className="ml-2 text-sm font-medium block text-gray-900 dark:text-gray-400"
           >
             I agree with the{" "}
             <Link
-              to="#"
+              target="_blank"
+              to="/privacy-policy"
               className="text-blue-600 hover:underline dark:text-blue-500"
             >
               terms and conditions
             </Link>
             .
           </label>
+        </div>
+        <div className="absolute bottom-6 right-4">
+          <Tooltip
+            title={isRegisterWithPhone ? "Verify via Email" : "Verify via OTP"}
+            TransitionComponent={Zoom}
+            arrow
+            placement="top"
+          >
+            <Switch
+              checked={isRegisterWithPhone}
+              onChange={() => setIsRegisterWithPhone(!isRegisterWithPhone)}
+              // {...Label}
+              // defaultChecked
+              size="small"
+            />
+          </Tooltip>
         </div>
         <button
           type="submit"

@@ -7,7 +7,7 @@ const AccountCreatedSuccess = () => {
   return (
     <section className="bg-blue h-screen flex items-center justify-center">
       <div
-        className="bg-white px-8 py-8 rounded-xl shadow-md w-[50vw]  max-w-sm h-[40vh]"
+        className="bg-white px-8 py-8 rounded-xl shadow-md w-[50vw]  max-w-sm min-h-[40vh]"
         style={{ minWidth: "318px" }}
       >
         <h1 className="font-bold pb-2">Hi {userReg.fullname}</h1>
